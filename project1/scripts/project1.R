@@ -31,8 +31,3 @@ ggplot(df_20years, aes(x=year)) +
   geom_line(stat = "count", color = "red") +
   labs(title ="Number of assistances by year", x = "Year", y = "Number of Assistances") +
   theme_grey()
-
-  
-
-
-
