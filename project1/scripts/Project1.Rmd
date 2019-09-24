@@ -83,19 +83,47 @@ We can see that we are helping more and more people each year, and the total amo
 ### RQ2: How many new clients do we help each year?
 By "new" clients we mean this client has never appeared before.
 ```{r, echo=TRUE, message=FALSE}
+# select corresponding columns
+df_clients <- select(df_20years, c(2,16))
 
-# to be done
+#create a data frame to store the result
+df_new_clients <- data.frame(matrix(ncol = 2, nrow = 0))
+x <- c("NewClients", "Year")
+colnames(df_new_clients) <- x
 
+# loop over each year
+for (i in 2000:2018){
+    
+    # extract the record for this year
+    df_clients_this_year <- filter(df_clients, df_clients$year == i)
+    
+    # get the unique client numbers of this year
+    count_this_year <- unique(df_clients_this_year$ClientFileNumber)
+    
+    # extract the record for last year
+    df_clients_last_year <- filter(df_clients, df_clients$year == (i-1))
+    
+    # get the unique client numbers of this year
+    count_last_year <- unique(df_clients_last_year$ClientFileNumber)
+    
+    # append count of new clients to the dataframe
+    new_clients_count = length(setdiff(count_this_year, count_last_year))
+    df_new_clients[nrow(df_new_clients) + 1,] = c(new_clients_count, i)
+}
 
+# plot
+ggplot(df_new_clients, aes(x = Year, y = NewClients)) +
+    geom_bar(stat = "identity") + 
+    geom_text(aes(label=NewClients), vjust= -0.5) + 
+    labs(title ="Amount of New Clients each year (2000-2018)", x = "Year", 
+         y = "Amount of New Clients") +
+    theme_grey()
 ```
 
 
 ### RQ3: Which family/individual received the most assistance each year from 2000 to 2018?
 This tells us which family received the most assistance, which should get more attention from us. Or we can follow up to see whether their conditions have become better.
 ```{r, echo=TRUE, message=FALSE}
-# select corresponding columns
-df_clients <- select(df_20years, c(2,16))
-
 # create a empty data frame to store the result
 df_clients_result <- data.frame(matrix(ncol = 3, nrow = 0))
 x <- c("ClientFileNumber", "AssistanceReceived", "Year")
