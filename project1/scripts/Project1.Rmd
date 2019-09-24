@@ -1,0 +1,225 @@
+---
+title: "Project1"
+author: "Jiaming Qu"
+date: "9/24/2019"
+output: html_document
+---
+
+```{r, echo=TRUE, message=FALSE}
+library(ggplot2)
+library(tidyverse)
+```
+
+## Data Importing
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# read the file
+setwd("/Users/jiamingqu/Desktop/BIOS 611/project/bios611-projects-fall-2019-arthur0804/project1/")
+df <- read_delim("data/UMD_Services_Provided_20190719.tsv", delim="\t")
+```
+
+## Data Cleaning
+```{r, echo=TRUE, message=FALSE}
+# extract useful columns (remove column "field 1/2/3")
+df <- df[,1:15]
+
+# convert the datatype from character to date
+df$Date <- as.Date(df$Date, "%m/%d/%Y")
+
+# remove invalid rows with date in the future
+df <- filter(df, df$Date <= Sys.Date())
+
+# add a column of year from date
+df$year <- as.numeric(format(df$Date,'%Y'))
+
+# rename columns (remove the spaces in column names)
+names(df) <- c('Date','ClientFileNumber', 'ClientFileMerge','BusTickets',
+               'NotesofService','FoodProvidedfor', 'FoodPounds',
+               'ClothingItems', 'Diapers', 'SchoolKits', 'HygieneKits',
+               'Referrals', 'FinancialSupport', 'TypeofBill',
+               'PayerofSupport','year')
+
+# take a look at the dataset
+head(df)
+```
+
+
+## Data Analysis
+```{r, echo=TRUE, message=FALSE}
+# first get a summary of the data frame
+summary(df)
+```
+
+### RQ1: Is assistance becoming more nowsdays than before?
+This gives us a general view of how our program grows by year, we expect to see the number of assistances is growing instead of decreasing.
+```{r, echo=TRUE, message=FALSE}
+# some records are too old, we only consider 2000 to 2018
+df_20years <- filter(df, df$year >= 2000 & df$year <= 2018)
+
+# in regards of total assitances each year
+df_assistance <- df_20years %>% group_by(year) %>% 
+    summarise(assistances = n())
+
+
+# in regards of clients each year
+df_client <- df_20years %>% group_by(year) %>% 
+    summarise(clients = length(unique(ClientFileNumber)))
+
+# join together
+df_assistance_client <- inner_join(df_assistance, df_client, by = "year")
+
+# gather
+df_assistance_client <- df_assistance_client %>% gather(type, count, c(assistances, clients)) 
+
+ggplot(df_assistance_client, aes(x=year, y = count, color = type)) + 
+    geom_line() +
+    labs(title ="Amount of Assistances and Clients each year (2000-2018)", 
+         x = "Year", y = "Count", color = "Total Amount Of") +
+    theme_grey()
+```
+
+We can see that we are helping more and more people each year, and the total amount of recoreded assistances is also increasing.
+
+### RQ2: How many new clients do we help each year?
+By "new" clients we mean this client has never appeared before.
+```{r, echo=TRUE, message=FALSE}
+
+# to be done
+
+
+```
+
+
+### RQ3: Which family/individual received the most assistance each year from 2000 to 2018?
+This tells us which family received the most assistance, which should get more attention from us. Or we can follow up to see whether their conditions have become better.
+```{r, echo=TRUE, message=FALSE}
+# select corresponding columns
+df_clients <- select(df_20years, c(2,16))
+
+# create a empty data frame to store the result
+df_clients_result <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("ClientFileNumber", "AssistanceReceived", "Year")
+colnames(df_clients_result) <- x
+
+# loop over each year
+for (i in 2000:2018){
+  # extract the record for a year
+  df_clients_year <- filter(df_clients, df_clients$year == i)
+    
+  # count the amount by each unique id and then sort
+  result <- arrange(df_clients_year %>% count(ClientFileNumber), desc(n))
+    
+  # add into the data frame
+  df_clients_result[nrow(df_clients_result) + 1,] = c(result[1,1],result[1,2], i)
+}
+
+df_clients_result
+```
+
+### RQ4: How does each kind of services change each year?
+Instead of the general amount of assistances, we also want to know how does each kind of service change, including both the count and the average amount.
+```{r, echo=TRUE, message=FALSE}
+# food
+df_20years_food <- df_20years %>% select(FoodPounds, year)
+df_20years_food <- df_20years_food %>% drop_na(FoodPounds)
+food_comparision <- df_20years_food  %>% group_by(year) %>% 
+    summarise(avg_food = mean(FoodPounds), count = n())
+
+ggplot(food_comparision, aes(x=year, y=avg_food)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average Food Pounds Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average Food Pounds Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+```{r, echo=TRUE, message=FALSE}
+# clothing
+df_20years_clothing <- df_20years %>% select(ClothingItems, year)
+df_20years_clothing <- df_20years_clothing %>% drop_na(ClothingItems)
+clothing_comparision <- df_20years_clothing  %>% group_by(year) %>% 
+    summarise(avg_clothing = mean(ClothingItems), count = n())
+
+ggplot(clothing_comparision, aes(x=year, y=avg_clothing)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average Clothing Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average Clothing Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+```{r, echo=TRUE, message=FALSE}
+# diapers
+df_20years_diapers <- df_20years %>% select(Diapers, year)
+df_20years_diapers <- df_20years_diapers %>% drop_na(Diapers)
+diapers_comparision <- df_20years_diapers  %>% group_by(year) %>% 
+    summarise(avg_diapers = mean(Diapers), count = n())
+
+ggplot(diapers_comparision, aes(x=year, y=avg_diapers)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average Diapers Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average Diapers Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+```{r, echo=TRUE, message=FALSE}
+# school items
+df_20years_school <- df_20years %>% select(SchoolKits, year)
+df_20years_school <- df_20years_school %>% drop_na(SchoolKits)
+school_comparision <- df_20years_school  %>% group_by(year) %>% 
+    summarise(avg_school = mean(SchoolKits), count = n())
+
+ggplot(school_comparision, aes(x=year, y=avg_school)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average School Kits Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average School Kits Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+```{r, echo=TRUE, message=FALSE}
+# hygiene kits
+df_20years_hygiene <- df_20years %>% select(HygieneKits, year)
+df_20years_hygiene <- df_20years_hygiene %>% drop_na(HygieneKits)
+hygiene_comparision <- df_20years_hygiene  %>% group_by(year) %>% 
+    summarise(avg_hygiene = mean(HygieneKits), count = n())
+
+ggplot(hygiene_comparision, aes(x=year, y=avg_hygiene)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average Hygiene Kits Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average Hygiene Kits Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+
+```{r, echo=TRUE, message=FALSE}
+# financial support
+# drop financial support == 0
+df_20years_financial = df_20years %>% filter(FinancialSupport != 0) %>%
+    select (FinancialSupport, year)
+# summarize the data
+financial_comparision <- df_20years_financial  %>% group_by(year) %>% 
+    summarise(avg_financial = mean(FinancialSupport), count = n())
+
+ggplot(financial_comparision, aes(x=year, y=avg_financial)) + 
+    geom_point(aes(size = count), color = "blue") +
+    labs(title ="Average Financial Support Per Assistance each year (2000-2018)", x = "Year", 
+         y = "Average Financial Support Per Assist") +
+    geom_path(linetype = 2) + 
+    theme_grey()
+```
+
+Sadly, the financial support only existed from 2002 to 2008.
+
+```{r, echo=TRUE, message=FALSE}
+
+
+```
+
+
+```{r, echo=TRUE, message=FALSE}
+
+
+```
