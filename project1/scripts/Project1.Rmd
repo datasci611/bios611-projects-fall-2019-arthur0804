@@ -8,6 +8,7 @@ output: html_document
 ```{r, echo=TRUE, message=FALSE}
 library(ggplot2)
 library(tidyverse)
+library(wordcloud)
 ```
 
 ## Data Importing
@@ -241,13 +242,21 @@ ggplot(financial_comparision, aes(x=year, y=avg_financial)) +
 
 Sadly, the financial support only existed from 2002 to 2008.
 
+### RQ5: Who are our kind denators?
 ```{r, echo=TRUE, message=FALSE}
+# drop na columns
+df_support <- df_20years %>% drop_na(PayerofSupport) %>% select(PayerofSupport)
 
+# use regular expression remove characters and numbers
+df_support$PayerofSupport <- gsub("[^A-Za-z]","" , df_support$PayerofSupport ,ignore.case = TRUE)
 
-```
+# summarize and sort
+df_support <- df_support %>% group_by(PayerofSupport) %>% 
+    summarise(n = n()) %>%
+    arrange(desc(n))
 
-
-```{r, echo=TRUE, message=FALSE}
-
-
+# plot in a wordclooud
+wordcloud(words = df_support$PayerofSupport, freq = df_support$n,
+          min.freq = 3, random.order=TRUE, rot.per=0.2, 
+          colors=brewer.pal(8, "Dark2"))
 ```
