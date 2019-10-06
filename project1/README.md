@@ -10,9 +10,11 @@ This dataset contains the recorded assistance to invididuals or families, includ
 
 ## Research Question
 
-- Which family/individual received the most assitance?
-- Is assistance becoming more nowsdays than before?
-- What kinds of services are given the most/least?
+- Is assistance and clients becoming more nowsdays than before?
+- How many new clients do we help each year?
+- Which family/individual received the most assistance each year from 2000 to 2018?
+- How does each kind of services change each year?
+- Who are our kind denators?
 
 ## Important Variables
 

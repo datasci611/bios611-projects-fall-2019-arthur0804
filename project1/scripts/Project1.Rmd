@@ -5,14 +5,17 @@ date: "9/24/2019"
 output: html_document
 ---
 
-```{r, echo=TRUE, message=FALSE}
+# Background Introduction
+The data set is kindly provided by Urban Ministries of Druham, which records their assistance and help to people each year in different kinds of services, *e.g.*, food, clothing, hygiene kits and etc. In this project, we analyze how the service scale changes over time, from both general and specific aspect.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
 library(wordcloud)
 ```
 
 ## Data Importing
-
+First of all, we import the .tsv file for analysis.
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # read the file
 setwd("/Users/jiamingqu/Desktop/BIOS 611/project/bios611-projects-fall-2019-arthur0804/project1/")
@@ -20,6 +23,7 @@ df <- read_delim("data/UMD_Services_Provided_20190719.tsv", delim="\t")
 ```
 
 ## Data Cleaning
+We need to clean the data, *i.e.*, removing unimportant or meaningless fields, converting some columns to specific data types for analysis, and renaming the column names.
 ```{r, echo=TRUE, message=FALSE}
 # extract useful columns (remove column "field 1/2/3")
 df <- df[,1:15]
@@ -39,28 +43,26 @@ names(df) <- c('Date','ClientFileNumber', 'ClientFileMerge','BusTickets',
                'ClothingItems', 'Diapers', 'SchoolKits', 'HygieneKits',
                'Referrals', 'FinancialSupport', 'TypeofBill',
                'PayerofSupport','year')
-
-# take a look at the dataset
-head(df)
 ```
 
 
 ## Data Analysis
+In this section, we provide a detailed data analysis which starts from a general view to a specific view at some aspect.
+
+First let's get a summary of the data frame, this help us to have an idea of the general distribution of the data, and find potential flaws in the data.
 ```{r, echo=TRUE, message=FALSE}
-# first get a summary of the data frame
 summary(df)
 ```
 
-### RQ1: Is assistance becoming more nowsdays than before?
-This gives us a general view of how our program grows by year, we expect to see the number of assistances is growing instead of decreasing.
+### RQ1: Is assistance and clients becoming more nowsdays than before?
+This gives us a general view of how our program grows by year, we expect to see both the number of assistances and clients are growing instead of decreasing.
 ```{r, echo=TRUE, message=FALSE}
-# some records are too old, we only consider 2000 to 2018
+# from the summary above, we can see some records are too old, we only consider 2000 to 2018
 df_20years <- filter(df, df$year >= 2000 & df$year <= 2018)
 
 # in regards of total assitances each year
 df_assistance <- df_20years %>% group_by(year) %>% 
     summarise(assistances = n())
-
 
 # in regards of clients each year
 df_client <- df_20years %>% group_by(year) %>% 
@@ -82,7 +84,7 @@ ggplot(df_assistance_client, aes(x=year, y = count, color = type)) +
 We can see that we are helping more and more people each year, and the total amount of recoreded assistances is also increasing.
 
 ### RQ2: How many new clients do we help each year?
-By "new" clients we mean this client has never appeared before.
+Although from the analysis above we know that we are helping more and more people each year, but how many new clients are we reaching out to? By "new" clients I mean this client has never appeared before a specifc year. This helps us understand how our program grows from another prospective.
 ```{r, echo=TRUE, message=FALSE}
 # select corresponding columns
 df_clients <- select(df_20years, c(2,16))
@@ -101,14 +103,14 @@ for (i in 2000:2018){
     # get the unique client numbers of this year
     count_this_year <- unique(df_clients_this_year$ClientFileNumber)
     
-    # extract the record for last year
-    df_clients_last_year <- filter(df_clients, df_clients$year == (i-1))
+    # extract the record for past years
+    df_clients_past_year <- filter(df_clients, df_clients$year < i)
     
     # get the unique client numbers of this year
-    count_last_year <- unique(df_clients_last_year$ClientFileNumber)
+    count_past_year <- unique(df_clients_past_year$ClientFileNumber)
     
     # append count of new clients to the dataframe
-    new_clients_count = length(setdiff(count_this_year, count_last_year))
+    new_clients_count = length(setdiff(count_this_year, count_past_year))
     df_new_clients[nrow(df_new_clients) + 1,] = c(new_clients_count, i)
 }
 
@@ -146,7 +148,7 @@ df_clients_result
 ```
 
 ### RQ4: How does each kind of services change each year?
-Instead of the general amount of assistances, we also want to know how does each kind of service change, including both the count and the average amount.
+Instead of the general amount of assistances, we also want to know how does each kind of service change, including both the count and the average amount. This helps us to understand which part has been good and which part still needs improvments. We only include the code for the first figure, for the sake of simplicity.
 ```{r, echo=TRUE, message=FALSE}
 # food
 df_20years_food <- df_20years %>% select(FoodPounds, year)
@@ -161,8 +163,11 @@ ggplot(food_comparision, aes(x=year, y=avg_food)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
+</br>
+</br>
+From the figure above, we could see that the amount of food assistances is increasing. And apart from the ''outlier'' in 2003, the average food pounds is also growing.
 
-```{r, echo=TRUE, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # clothing
 df_20years_clothing <- df_20years %>% select(ClothingItems, year)
 df_20years_clothing <- df_20years_clothing %>% drop_na(ClothingItems)
@@ -176,8 +181,11 @@ ggplot(clothing_comparision, aes(x=year, y=avg_clothing)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
+</br>
+</br>
+From the figure above, we could see that the amount of clothing assistances is increasing. But unfortunately, the average clothing items fluctuates over time, and is decreasing since 2014.
 
-```{r, echo=TRUE, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # diapers
 df_20years_diapers <- df_20years %>% select(Diapers, year)
 df_20years_diapers <- df_20years_diapers %>% drop_na(Diapers)
@@ -191,8 +199,11 @@ ggplot(diapers_comparision, aes(x=year, y=avg_diapers)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
+</br>
+</br>
+From the figure above, we could see that the amount of diapers assistances is decreasing, but the average diapers items suddenly increases to over 400 in 2018.
 
-```{r, echo=TRUE, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # school items
 df_20years_school <- df_20years %>% select(SchoolKits, year)
 df_20years_school <- df_20years_school %>% drop_na(SchoolKits)
@@ -206,8 +217,11 @@ ggplot(school_comparision, aes(x=year, y=avg_school)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
+</br>
+</br>
+From the figure above, we could see that the amount of school items assistances keeps unchanged over years, except an ''outlier'' in 2003, and the average amount fluctuates these years.
 
-```{r, echo=TRUE, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # hygiene kits
 df_20years_hygiene <- df_20years %>% select(HygieneKits, year)
 df_20years_hygiene <- df_20years_hygiene %>% drop_na(HygieneKits)
@@ -221,9 +235,11 @@ ggplot(hygiene_comparision, aes(x=year, y=avg_hygiene)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
+</br>
+</br>
+From the figure above, we could see that the amount of hygiene kits is decreasing compared to that between 2002 and 2009, and the average amount does not change a lot over these years, which keeps around 1.0.
 
-
-```{r, echo=TRUE, message=FALSE}
+```{r, echo=FALSE, message=FALSE}
 # financial support
 # drop financial support == 0
 df_20years_financial = df_20years %>% filter(FinancialSupport != 0) %>%
@@ -239,11 +255,13 @@ ggplot(financial_comparision, aes(x=year, y=avg_financial)) +
     geom_path(linetype = 2) + 
     theme_grey()
 ```
-
-Sadly, the financial support only existed from 2002 to 2008.
+</br>
+</br>
+From the figure above, we could see that the average amount per financial assistance ranges from 80 to 135 these years, but the amount is decreasing. And sadly, the financial support only existed from 2002 to 2008.
 
 ### RQ5: Who are our kind denators?
-```{r, echo=TRUE, message=FALSE}
+There is a column indicating the source of our financial support. We could use a histogram to analyze the frequency, but there is some misspelling in the text which needs cleaning the text. Instead, we use a word cloud to dispaly the text, the bigger the text, the higher the frequency is.
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # drop na columns
 df_support <- df_20years %>% drop_na(PayerofSupport) %>% select(PayerofSupport)
 
@@ -260,3 +278,9 @@ wordcloud(words = df_support$PayerofSupport, freq = df_support$n,
           min.freq = 3, random.order=TRUE, rot.per=0.2, 
           colors=brewer.pal(8, "Dark2"))
 ```
+</br>
+</br>
+From the word cloud, we could see that we receive a lot of donations from ''GoodNeighbourFund'', ''StPhillips'', ''UMC'', and etc.
+
+# Coclusion
+In this project, we analyze in detail how the scale of UMD services changes from 2000 to 2018. We could see that in general, we are helping more and more people and reaching out to more and more new clients each year. But we still need to provide more school items and hygiene kits, and financial support as well.
