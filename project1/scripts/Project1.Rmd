@@ -259,7 +259,7 @@ ggplot(financial_comparision, aes(x=year, y=avg_financial)) +
 </br>
 From the figure above, we could see that the average amount per financial assistance ranges from 80 to 135 these years, but the amount is decreasing. And sadly, the financial support only existed from 2002 to 2008.
 
-### RQ5: Who are our kind denators?
+### RQ5: Who are our kind donators?
 There is a column indicating the source of our financial support. We could use a histogram to analyze the frequency, but there is some misspelling in the text which needs cleaning the text. Instead, we use a word cloud to dispaly the text, the bigger the text, the higher the frequency is.
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # drop na columns
