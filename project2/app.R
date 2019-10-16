@@ -66,43 +66,22 @@ ui <- navbarPage("Project 2",
     
     tabPanel("RQ3",
         fluidPage(
-            titlePanel("Not Decided"),
-            sidebarLayout(
-                sidebarPanel(),
-                mainPanel()
-            )
-        )
-    ),
-    
-    tabPanel("RQ4",
-        fluidPage(
             titlePanel("Services in detail"),
             sidebarLayout(
                 sidebarPanel(
                     "This page shows in detail how each kind of service grows.",
                     hr(),
-                    selectInput("rq4_checkbox", label = h5("I an interest in:"), 
+                    selectInput("rq3_checkbox", label = h5("I an interest in:"), 
                                 choices = list("Food" = 1, "Clothing" = 2,"Diapers" = 3,
                                                "School Items" = 4, "Hygiene Kits" = 5),selected = 1),
                     hr(),
-                    sliderInput("rq4_year_slider", label = h5("Please select year range:"), min = 2000, 
+                    sliderInput("rq3_year_slider", label = h5("Please select year range:"), min = 2000, 
                                 max = 2018, value = c(2000, 2018)),
                     hr(),
-                    selectInput("rq4_checkbox_color", label = h5("Select a color you like:"), 
+                    selectInput("rq3_checkbox_color", label = h5("Select a color you like:"), 
                                 choices = list("Red" = 1, "Blue" = 2,"Green" = 3,
                                                "Yellow" = 4, "Black" = 5),selected = 1)),
-                mainPanel(plotOutput("rq4_plot"))
-            )
-        )
-    ),
-
-    
-    tabPanel("RQ5",
-        fluidPage(
-            titlePanel("Not Decided"),
-            sidebarLayout(
-                sidebarPanel(),
-                mainPanel()
+                mainPanel(plotOutput("rq3_plot"))
             )
         )
     )
@@ -123,11 +102,8 @@ server <- function(input, output) {
     # redner the plot on the RQ2 page
     output$rq2_plot <- renderPlot(generate_rq2_plot(input$rq2_year_slider[1], input$rq2_year_slider[2]))
     
-    # redner the plot on the RQ3 page
-    
-    
     # redner the plot on the RQ4 page
-    output$rq4_plot <- renderPlot(generate_rq4_plot(input$rq4_year_slider[1], input$rq4_year_slider[2], input$rq4_checkbox, input$rq4_checkbox_color))
+    output$rq3_plot <- renderPlot(generate_rq3_plot(input$rq3_year_slider[1], input$rq3_year_slider[2], input$rq3_checkbox, input$rq3_checkbox_color))
     
     # redner the plot on the RQ5 page
     

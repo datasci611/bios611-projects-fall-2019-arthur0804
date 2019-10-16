@@ -5,6 +5,7 @@ library(tidyverse)
 # -----------------------------data importing and cleaning-----------------------------
 
 df <- read_delim("data/UMD_Services_Provided_20190719.tsv", delim="\t")
+
 # extract useful columns (remove column "field 1/2/3")
 df <- df[,1:15]
 # convert the datatype from character to date
@@ -28,7 +29,9 @@ generate_about_info <- function(selection){
         return(c("The data set is kindly provided by Urban Ministries of Druham, which records their assistance and help to people each year in different kinds of services, 
                e.g., food, clothing, hygiene kits and etc.", "In this project, we analyze how the service scale changes over time, from both general and specific aspect."))
     }else if (selection == 2){
-        return(c("RQ1:", "RQ2:", "RQ3:", "RQ4:", "RQ5:"))
+        return(c("RQ1: How does our program grow in general?", 
+                 "RQ2: How does our program reach out to new clients?", 
+                 "RQ3: How does each kind of service develop over time?"))
     }else{
         return(c("Jiaming Qu", "School of Information and Library Science, UNC-Chapel Hill", "jiaming@ad.unc.edu", "jiamingqu.com"))
     }
@@ -115,8 +118,8 @@ generate_rq2_plot <- function(year1, year2){
         theme_grey()
 }
 
-# generate the plots for rq4
-generate_rq4_plot <- function(year1, year2, selection, color_choice){
+# generate the plots for rq3
+generate_rq3_plot <- function(year1, year2, selection, color_choice){
     
     # first filter the data
     df_filter <- df %>% filter(year >= year1 & year <= year2)
