@@ -102,10 +102,8 @@ server <- function(input, output) {
     # redner the plot on the RQ2 page
     output$rq2_plot <- renderPlot(generate_rq2_plot(input$rq2_year_slider[1], input$rq2_year_slider[2]))
     
-    # redner the plot on the RQ4 page
+    # redner the plot on the RQ3 page
     output$rq3_plot <- renderPlot(generate_rq3_plot(input$rq3_year_slider[1], input$rq3_year_slider[2], input$rq3_checkbox, input$rq3_checkbox_color))
-    
-    # redner the plot on the RQ5 page
     
 }
 

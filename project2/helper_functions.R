@@ -3,7 +3,7 @@ library(ggplot2)
 library(tidyverse)
 
 # -----------------------------data importing and cleaning-----------------------------
-
+#setwd("/Users/jiamingqu/Desktop/BIOS 611/project/bios611-projects-fall-2019-arthur0804/project2/")
 df <- read_delim("data/UMD_Services_Provided_20190719.tsv", delim="\t")
 
 # extract useful columns (remove column "field 1/2/3")

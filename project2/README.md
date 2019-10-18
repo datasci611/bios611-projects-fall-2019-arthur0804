@@ -19,3 +19,6 @@ This dataset contains the recorded assistance to invididuals or families, includ
 ## Analysis Approach
 
 Using Shiny in R to create an interactive dashboard which enables user to interact with the visualization.
+
+## Shiny Host
+https://arthur0804.shinyapps.io/project2/
