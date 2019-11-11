@@ -12,9 +12,7 @@ This dataset contains the recorded assistance to invididuals or families, includ
 
 - Is assistance and clients becoming more nowsdays than before?
 - How many new clients do we help each year?
-- Which family/individual received the most assistance each year from 2000 to 2018?
 - How does each kind of services change each year?
-- Who are our kind denators?
 
 ## Analysis Approach
 
