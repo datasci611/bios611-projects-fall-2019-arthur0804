@@ -29,7 +29,7 @@ ggplot(df_length_filtered, aes(x=length.of.stay)) +
     theme_grey()
 ```
 
-**It shows that most people stay under 100 days in the shelter with few up to 250 everytime when they come to the shelter.**
+It shows that most people stay under 100 days in the shelter with few up to 250 everytime when they come to the shelter.
 
 ### 2. How old are our clients when they come to the shelter?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -40,7 +40,7 @@ ggplot(df, aes(x=Client.Age.at.Entry)) +
     theme_grey()
 ```
 
-****It shows that people's ages when coming to the shelter nearly follows a normal distribution, with centering between 40 to 60 years old.**
+It shows that people's ages when coming to the shelter nearly follows a normal distribution, with centering between 40 to 60 years old.
 
 ### 3. How many times do our clients come back to our shelter?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -54,7 +54,7 @@ ggplot(df_frequency, aes(x=Freq)) +
     theme_grey()
 ```
 
-**It shows that most people only come under 3 times to our shelter, with 1 time as the most.**
+It shows that most people only come under 3 times to our shelter, with 1 time as the most.
 
 ### 4. Are there any correlations between people's age when coming to the shelter and their length of stay?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -65,22 +65,91 @@ ggplot(df, aes(x=Client.Age.at.Entry, y=length.of.stay)) +
     theme_grey()
 ```
 
-**We do not see a positive correlation between age and length of stay, my hypothesis that the older people are when they come to the shelter, the longer they will stay is proved to be wrong.**
+We do not see a positive correlation between age and length of stay, my hypothesis that the older people are when they come to the shelter, the longer they will stay is proved to be wrong.
 
-### 5. How does the trend of people's coming change in general?
+### 5. How does the trend of people's coming grow in general?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# conver date time
+df$Entry.Date <- as.Date(df$Entry.Date, "%Y-%m-%d")
+df$year <- as.numeric(format(df$Entry.Date,'%Y'))
 
+# dataframe of client counts by year
+df_clients_year <- df %>% group_by(year) %>% summarise(Clients = n())
 
+# dataframe of new client counts by year
+df_new_clients_year <- data.frame(matrix(ncol = 2, nrow = 0))
+x <- c("NewClients", "year")
+colnames(df_new_clients_year) <- x
+year <- c(2012, 2014, 2015, 2016, 2017, 2018, 2019)
 
+# loop over each year
+for (i in year){
+    # extract the record for this year
+    df_clients_this_year <- filter(df, df$year == i)
+    # get the unique client numbers of this year
+    count_this_year <- unique(df_clients_this_year$Client.ID)
+    # extract the record for past years
+    df_clients_past_year <- filter(df, df$year < i)
+    # get the unique client numbers of this year
+    count_past_year <- unique(df_clients_past_year$Client.ID)
+    # append count of new clients to the dataframe
+    new_clients_count = length(setdiff(count_this_year, count_past_year))
+    df_new_clients_year[nrow(df_new_clients_year) + 1,] = c(new_clients_count, i)
+}
+
+# combine two dataframes
+df_clinets <- inner_join(df_clients_year, df_new_clients_year, by = "year")
+
+# reshape
+df_clinets <- df_clinets %>% gather(type, count, c(Clients, NewClients)) 
+
+# plot
+ggplot(df_clinets, aes(x=year, y = count, color = type)) + 
+    geom_line() +
+    labs(title ="Amount of clients and new clients by year", 
+         x = "Year", y = "Count", color = "Amount Of") +
+    theme_grey()
+```
+
+This figure shows that apart from 2012-2014, the general trends of clients and new clients coming to the shelter are decreasing.
+
+### 6. Are there any correlations between clients' destination and the reasons?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# filter empty data
+df <- df %>% filter(df$Destination != "")
+df <- df %>% filter(df$Reason.for.Leaving != "")
+
+# chi-squre test
+t <- table(df$Destination, df$Reason.for.Leaving)
+chisq <- chisq.test(t)
+result <- round(chisq$residuals, 3)
+result_df <- as.data.frame.matrix(result)
+
+# store the result
+df_cor <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("Destination", "Reason", "Value")
+colnames(df_cor) <- x
+row_names <- rownames(result_df)
+col_names <- colnames(result_df)
+for(i in 1:length(row_names)){
+    for(j in 1:length(col_names)){
+        value <- result_df[i,j]
+        rowname <-row_names[i]
+        colname <-col_names[j]
+        df_cor[nrow(df_cor) + 1,] = c(rowname, colname, value)
+    }
+}
+
+df_cor$Value <- as.numeric(df_cor$Value)
+```
+
+We use the Chi-squre test to test the correlation between two categorical data.
+
+Top 5 positive correlation:
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+df_sorted_desc <- df_cor %>% arrange(desc(df_cor$Value))
+df_sorted_desc[1:5,1:2]
 ```
 
 
-
-
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-
-
-```
 
