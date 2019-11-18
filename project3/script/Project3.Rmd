@@ -1,0 +1,86 @@
+---
+title: "Project3"
+author: "Jiaming Qu"
+date: "11/17/2019"
+output: html_document
+---
+
+## Background Introduction
+The data set is kindly provided by Urban Ministries of Druham, which records their assistance and help to people each year. Different from Project 1 which includes services in many aspects, this project focuses on the shelter service with detailed information of clients and service records. In this project, I am going to explore how the shelter services influence clients and find the hidden trends.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(tidyverse)
+
+df <- read.csv("/Users/arthur_0804/Desktop/bios611-projects-fall-2019-arthur0804/project3/data/cleaned/client_data_merged.tsv", sep = "\t")
+```
+
+## Research Question
+### 1. How long does our clients stay in the shelter everytime when they come?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# filter invalid length
+df_length_filtered <- subset(df, length.of.stay >= 0)
+# plot
+ggplot(df_length_filtered, aes(x=length.of.stay)) +  
+    geom_histogram(binwidth = 30, color = "red", fill = "green", alpha = 0.4) + 
+    labs(title ="Distribution of stay in the shelter", x = "Days", y = "Count") + 
+    scale_x_continuous(limits = c(0, 750)) + 
+    scale_y_continuous(limits = c(0, 1500)) + 
+    theme_grey()
+```
+
+**It shows that most people stay under 100 days in the shelter with few up to 250 everytime when they come to the shelter.**
+
+### 2. How old are our clients when they come to the shelter?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# plot
+ggplot(df, aes(x=Client.Age.at.Entry)) +  
+    geom_histogram(binwidth = 5, color = "red", fill = "green", alpha = 0.4) + 
+    labs(title ="Distribution of age when coming the shelter", x = "Age", y = "Count") +
+    theme_grey()
+```
+
+****It shows that people's ages when coming to the shelter nearly follows a normal distribution, with centering between 40 to 60 years old.**
+
+### 3. How many times do our clients come back to our shelter?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# get frequency
+df_frequency <- as.data.frame(table(df['Client.ID']))
+# plot
+ggplot(df_frequency, aes(x=Freq)) +  
+    geom_histogram(binwidth = 1, color = "red", fill = "green", alpha = 0.4) + 
+    labs(title ="Distribution of frequency coming to the shelter", x = "Frequency", y = "Count") + 
+    scale_x_continuous(limits = c(0, 20)) + 
+    theme_grey()
+```
+
+**It shows that most people only come under 3 times to our shelter, with 1 time as the most.**
+
+### 4. Are there any correlations between people's age when coming to the shelter and their length of stay?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# plot
+ggplot(df, aes(x=Client.Age.at.Entry, y=length.of.stay)) +  
+    geom_point() + 
+    labs(title ="Correlation between age and length of stay", x = "Age", y = "Days") +
+    theme_grey()
+```
+
+**We do not see a positive correlation between age and length of stay, my hypothesis that the older people are when they come to the shelter, the longer they will stay is proved to be wrong.**
+
+### 5. How does the trend of people's coming change in general?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+```
+
+
+
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+
+
+```
+
