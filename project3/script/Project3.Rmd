@@ -11,12 +11,36 @@ The data set is kindly provided by Urban Ministries of Druham, which records the
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
-
-df <- read.csv("/Users/arthur_0804/Desktop/bios611-projects-fall-2019-arthur0804/project3/data/cleaned/client_data_merged.tsv", sep = "\t")
+df <- read.csv("/Users/jiamingqu/Desktop/BIOS 611/project/bios611-projects-fall-2019-arthur0804/project3/data/cleaned/client_data_merged.tsv", sep = "\t")
 ```
 
 ## Research Question
-### 1. How long does our clients stay in the shelter everytime when they come?
+### Section 1. Deomographic data analysis of our clients.
+#### 1.1 How old are our clients when they come to the shelter?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# plot
+ggplot(df, aes(x=Client.Age.at.Entry)) +  
+    geom_histogram(binwidth = 5, color = "red", fill = "green", alpha = 0.4) + 
+    labs(title ="Distribution of age when coming the shelter", x = "Age", y = "Count") +
+    theme_grey()
+```
+
+It shows that people's ages when coming to the shelter nearly follows a normal distribution, with centering between 40 to 60 years old.
+
+#### 1.2 What about gender and race?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+gender <- df %>% filter((Client.Gender == "Female") | (Client.Gender == "Male"))
+ggplot(gender, aes(fill=Client.Primary.Race, x=Client.Gender)) + 
+  geom_bar(position="stack") + 
+  labs(title ="Distribution of gender and race", x = "Gender", y = "Count") +
+  theme_grey()
+```
+
+It shows that there are more male clients than female clients (4000 vs near 1000). Also we could see the most clients are Black or African American, followed by White.
+
+
+## Behavior Analysis
+### 2.1 How long does our clients stay in the shelter everytime when they come?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # filter invalid length
 df_length_filtered <- subset(df, length.of.stay >= 0)
@@ -29,20 +53,20 @@ ggplot(df_length_filtered, aes(x=length.of.stay)) +
     theme_grey()
 ```
 
-It shows that most people stay under 100 days in the shelter with few up to 250 everytime when they come to the shelter.
+It shows that most people stay under 100 days in the shelter with few up to 250 days everytime when they come to the shelter.
 
-### 2. How old are our clients when they come to the shelter?
+### 2.2 Are there any correlations between people's age when coming to the shelter and their length of stay?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # plot
-ggplot(df, aes(x=Client.Age.at.Entry)) +  
-    geom_histogram(binwidth = 5, color = "red", fill = "green", alpha = 0.4) + 
-    labs(title ="Distribution of age when coming the shelter", x = "Age", y = "Count") +
+ggplot(df, aes(x=Client.Age.at.Entry, y=length.of.stay)) +  
+    geom_point() + 
+    labs(title ="Correlation between age and length of stay", x = "Age", y = "Days") +
     theme_grey()
 ```
 
-It shows that people's ages when coming to the shelter nearly follows a normal distribution, with centering between 40 to 60 years old.
+We do not see a positive correlation between age and length of stay, my hypothesis that the older people are when they come to the shelter, the longer they will stay is proved to be wrong.
 
-### 3. How many times do our clients come back to our shelter?
+### 2.3 Do our clients come back to our shelter after they leave?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # get frequency
 df_frequency <- as.data.frame(table(df['Client.ID']))
@@ -54,25 +78,43 @@ ggplot(df_frequency, aes(x=Freq)) +
     theme_grey()
 ```
 
-It shows that most people only come under 3 times to our shelter, with 1 time as the most.
+It shows that most people only come under 3 times to our shelter, with 1 time as the most. Therefore we might prepare for someone's coming back.
 
-### 4. Are there any correlations between people's age when coming to the shelter and their length of stay?
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# plot
-ggplot(df, aes(x=Client.Age.at.Entry, y=length.of.stay)) +  
-    geom_point() + 
-    labs(title ="Correlation between age and length of stay", x = "Age", y = "Days") +
-    theme_grey()
-```
-
-We do not see a positive correlation between age and length of stay, my hypothesis that the older people are when they come to the shelter, the longer they will stay is proved to be wrong.
-
-### 5. How does the trend of people's coming grow in general?
+### 2.4 What month do clients like to come?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # conver date time
 df$Entry.Date <- as.Date(df$Entry.Date, "%Y-%m-%d")
 df$year <- as.numeric(format(df$Entry.Date,'%Y'))
+df$month <- as.numeric(format(df$Entry.Date,'%m'))
 
+# dataframe of new client counts by year
+df_avg_month <- data.frame(matrix(ncol = 2, nrow = 0))
+x <- c("Clients", "Month")
+colnames(df_avg_month) <- x
+
+month <- c(1:12)
+for (m in month){
+  # extract the record for this year
+  df_sum_by_month <- filter(df, df$month == m)
+  s  = nrow(df_sum_by_month)
+  s = s / 7
+  df_avg_month[nrow(df_avg_month) + 1,] = c(s, m)
+}
+
+ggplot(df_avg_month, aes(x=Month, y = Clients)) + 
+  geom_histogram(stat="identity") +
+  labs(title ="Amount of clients by month (average of years)", 
+       x = "Month", y = "Count") +
+  scale_x_continuous(breaks = c(1, 3, 5, 7, 9, 11)) + 
+  theme_grey()
+```
+
+
+This indicates that on average of these years, there is no a particular month when our clients like to come. Three seasons have the most records, which are March, May and August. Thus, we need to parepare for these seasons and also all year round. 
+
+## 3. Other Information
+### 3.1 How does the trend of people's coming grow in general?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # dataframe of client counts by year
 df_clients_year <- df %>% group_by(year) %>% summarise(Clients = n())
 
@@ -113,7 +155,37 @@ ggplot(df_clinets, aes(x=year, y = count, color = type)) +
 
 This figure shows that apart from 2012-2014, the general trends of clients and new clients coming to the shelter are decreasing.
 
-### 6. Are there any correlations between clients' destination and the reasons?
+### 3.2 Where do our clients go after they leave our shelter?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+leaving_df <- df %>% group_by(Destination)  %>% summarise(count = n()) %>% arrange(desc(count))
+leaving_df <- leaving_df[1:5,]
+
+ggplot(leaving_df, aes(x=Destination, y = count)) + 
+  geom_histogram(stat="identity") +
+  labs(title ="Destination of our clients after leaving the shelter", 
+       x = "Destination", y = "Count") +
+  theme_grey() + 
+  theme(axis.text.x = element_text(angle = 25, hjust = 1))
+```
+
+From the figure we could see the most impossible destination for our clients are staying or living with friends, followd by with family with exception of "No Interview" which is the 2nd place.
+
+### 3.3 What are the reasons that make our clients leave the shelter?
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+leaving_df2 <- df %>% group_by(Reason.for.Leaving)  %>% summarise(count = n()) %>% arrange(desc(count))
+leaving_df2 <- leaving_df2[1:5,]
+
+ggplot(leaving_df2, aes(x=Reason.for.Leaving, y = count)) + 
+  geom_histogram(stat="identity") +
+  labs(title ="Reasons of our clients' leaving the shelter", 
+       x = "Reasons for leaving", y = "Count") +
+  theme_grey() + 
+  theme(axis.text.x = element_text(angle = 25, hjust = 1))
+```
+
+From the figure we could see the most impossible reasons for leaving are the completion of the program or left for housing, with exception of "Other" and "Unknown" which are the 1st and 2nd places.
+
+### 3.4 Are there any correlations between clients' destination and the reasons?
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # filter empty data
 df <- df %>% filter(df$Destination != "")
@@ -145,10 +217,14 @@ df_cor$Value <- as.numeric(df_cor$Value)
 
 We use the Chi-squre test to test the correlation between two categorical data.
 
-Top 5 positive correlation:
+Top 10 positive correlation:
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 df_sorted_desc <- df_cor %>% arrange(desc(df_cor$Value))
-df_sorted_desc[1:5,1:2]
+for (i in c(1:10)){
+  d = df_sorted_desc[i,1]
+  r = df_sorted_desc[i,2]
+  print(paste("Destination:",d, " + Reason: ", r))
+}
 ```
 
 
