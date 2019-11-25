@@ -1,0 +1,38 @@
+** This is only the feedback based on the current work. **
+** To: j-foster2
+** From: arthur0804
+
+1. Is the project organized modularly, with Make as the workflow manager?
+Yes, the Make script is included, although I haven't tested.
+
+2. Does the project use both Python (Pandas specifically) and R (Tidyverse specifically) scripts?
+Yes, both are used.
+
+3. Is Docker used to define execution environments appropriately?
+Not really in the current version.
+
+4. Are the plots appropriate for the data types, the hypotheses being tested, and the points being communicated?
+Yes. The plots explain the research questions very well.
+
+5. How can the project be organized or documented more clearly?
+Overall it's good, one potential suggestion is that adding more contents into the project, e.g., one or two more research questions, or dive deeper into the current one. As you mention in the README file, you are interested in the correlations between gender and services, so I suppose you could keep investigating such correlations, or trying to see whether these correlations change over time.
+
+6. Is the purpose of the project communicated clearly?
+Yes, from the README file I could clearly see the purpose, background information and research questions.
+
+7. Does the purpose of the project make sense from the client’s point of view? How could the project better serve the client?
+Yes, if I were the staff from UMD I would find it very helpful.
+
+8. Is the source of the data made clear? (Remember that this project can be part of your public portfolios, so people not familiar with UMD may see it).
+Yes, explanations are provided in the README file.
+
+9. Is the interpretation of figures clearly explained?
+Not really. Plots are very nice with interpretable titles and legends, but it would be better if one or two setences of explanations of the content are provided in the PDF output file.
+
+10. Is the purpose and interpretation of analysis steps clearly communicated?
+Yes, same as #8, explanations are provided in the README file.
+
+11. Are overall take-home messages clearly communicated?
+Yes.
+
+Nice work!

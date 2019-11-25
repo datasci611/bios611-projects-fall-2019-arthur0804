@@ -1,0 +1,38 @@
+** This is only the feedback based on the current work. **
+** To: OSylli
+** From: arthur0804
+
+1. Is the project organized modularly, with Make as the workflow manager?
+Yes, the Make script is included, although I haven't tested.
+
+2. Does the project use both Python (Pandas specifically) and R (Tidyverse specifically) scripts?
+Yes, both are used.
+
+3. Is Docker used to define execution environments appropriately?
+Yes.
+
+4. Are the plots appropriate for the data types, the hypotheses being tested, and the points being communicated?
+Yes. The plots explain the research questions very well.
+
+5. How can the project be organized or documented more clearly?
+Overall it's perfect, one potential suggestion is that adding some explanations to the "Rplots" output file. Also, for some figures with many variables, e.g., "The relationship between duration of stay and clients' live condition" (on page 4), "The relationship between the total times of Entry of the kind of Clients and clients' live condition" (on page 5), it would look cleaner if those rare classes are removed.
+
+6. Is the purpose of the project communicated clearly?
+Yes, from the README file I could clearly see the purpose, background information and research questions.
+
+7. Does the purpose of the project make sense from the client’s point of view? How could the project better serve the client?
+Yes, if I were the staff from UMD I would find it very helpful.
+
+8. Is the source of the data made clear? (Remember that this project can be part of your public portfolios, so people not familiar with UMD may see it).
+Yes, explanations are provided in the README file.
+
+9. Is the interpretation of figures clearly explained?
+Not really. Same as #5, plots are very nice with interpretable titles and legends, but it would be better if one or two setences of explanations of the content are provided in the PDF output file.
+
+10. Is the purpose and interpretation of analysis steps clearly communicated?
+Yes, same as #8, explanations are provided in the README file.
+
+11. Are overall take-home messages clearly communicated?
+Yes.
+
+Overall it's a perfect project and I learned a lot from your identification of problems.
