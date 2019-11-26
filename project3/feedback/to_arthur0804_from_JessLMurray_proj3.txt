@@ -1,0 +1,17 @@
+to_arthur0804_from_JessLMurray_proj3.txt
+Impressions: 
+Your readme includes a good description of the background on UMD for those who are new to the project, and a brief description of the datasets you are using - nice job! Be sure to fill in your research question once you have finished your rough draft, since this will be important for your final grade and for the reader. 
+Your html document is clean, easy to read, and has very attractive figures - well done! You have a typo in your Section 1 header; it should read as "Demographic" instead of "Deomographic". I really like your stacked graph showing the distribution of race by gender; it effectively conveys a lot of information in a single figure. I am very excited to see the results of your Chi-squared analysis! I think this information will be very useful for UMD with some added interpretation/discussion of your results. Overall, I think your analysis is very promising and I can't wait to see your final draft!
+
+Feedback Outline: 
+1. Project is organized modularly, but does not include Make
+2. Both Python and R are used 
+3. Docker is not used (as far as I can tell)
+4. Plots are appropriate and results are communicated clearly
+5. Project may be more clearly organized with an interpretation/discussion of your statistical analyses
+6. Purpose can be discerned from final html but is not stated in the readme
+7. The data analysis and questions being asked in the html make sense from the client's point of view 
+8. Data source is explained clearly
+9. Figure interpretation and results are explained sufficiently
+10. Purpose and interpretation of analysis is communicated in html document 
+11. Take home message is not fully communicated but this is a rough draft 
