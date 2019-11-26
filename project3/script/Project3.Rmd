@@ -11,7 +11,7 @@ The data set is kindly provided by Urban Ministries of Druham, which records the
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
-df <- read.csv("/Users/jiamingqu/Desktop/BIOS 611/project/bios611-projects-fall-2019-arthur0804/project3/data/cleaned/client_data_merged.tsv", sep = "\t")
+df <- read.csv("../data/cleaned/client_data_merged.tsv", sep = "\t")
 ```
 
 ## Research Question
