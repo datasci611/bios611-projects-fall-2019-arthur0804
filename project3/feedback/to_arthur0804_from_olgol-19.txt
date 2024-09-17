@@ -1,0 +1,35 @@
+
+1. Is the project organized modularly, with Make as the workflow manager?
+The project is well structured and easy to understand.
+
+2. Does the project use both Python (Pandas specifically) and R (Tidyverse specifically) scripts?
+Yes, R was used to data analysis and graphical presentation and Python for data cleaning.
+
+3. Is Docker used to define execution environments appropriately?
+Yes, It seems to be working fine.
+
+4. Are the plots appropriate for the data types, the hypotheses being tested, and the points being communicated?
+The plots looks good. For the plot 2.2 I would add a bit more information waht this graph is present.
+
+5. How can the project be organized or documented more clearly?
+I would add a bit more description to each part of R code. Just more notes.
+
+6. Is the purpose of the project communicated clearly?
+I would add way more discription to the README file and to the R markdown. For example data source, what the meaning of the data.
+
+7. Does the purpose of the project make sense from the client’s point of view? How could the project better serve the client?
+
+I like how you made the conclusions.
+
+8. Is the source of the data made clear? (Remember that this project can be part of your public portfolios, so people not familiar with UMD may see it).
+I think you should add this part. It would be great if you will add the link to UMD and explain wahat they do.
+
+9. Is the interpretation of figures clearly explained?
+Yes. But for fig.2.2 I suggest to add a discription about what each dot means for somebody who doesn't use statistical analysis so often.
+
+10. Is the purpose and interpretation of analysis steps clearly communicated?
+I would add some short notes to the code in R markdown.
+
+11. Are overall take-home messages clearly communicated?
+
+Project looks very well. If you will add a bit more background information as data source it will look more clear. Good luck!
